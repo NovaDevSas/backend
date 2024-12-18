@@ -1,10 +1,11 @@
 const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
+const verifyRoles = require('../middleware/verifyRoles');
 
-router.get('/users', userController.getUsers); // Ruta para obtener la lista de usuarios
-router.post('/users', userController.createUser); // Ruta para crear un nuevo usuario
-router.put('/users/:id', userController.updateUser); // Ruta para actualizar un usuario
-router.delete('/users/:id', userController.deleteUser); // Ruta para eliminar un usuario
+router.get('/users', verifyRoles(['Administrador', 'SuperAdministrador']), userController.getUsers);
+router.post('/users', verifyRoles(['Administrador', 'SuperAdministrador']), userController.createUser);
+router.put('/users/:id', verifyRoles(['Administrador', 'SuperAdministrador']), userController.updateUser);
+router.delete('/users/:id', verifyRoles(['SuperAdministrador']), userController.deleteUser);
 
 module.exports = router;
