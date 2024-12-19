@@ -26,11 +26,10 @@ exports.register = async (req, res) => {
     await user.save();
 
     // Crear y devolver un token
-    const token = jwt.sign({ id: user._id }, 'secret', { expiresIn: '1h' });
-    res.status(201).send({ token });
+    const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET, { expiresIn: '1h' });
+    res.json({ token });
   } catch (err) {
-    console.error(err.message);
-    res.status(500).send('Server error');
+    res.status(500).json({ message: err.message });
   }
 };
 
@@ -70,3 +69,15 @@ exports.resetPassword = async (req, res) => {
   }
 };
 
+exports.getUserRoles = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id);
+    if (!user) {
+      return res.status(404).send('User not found');
+    }
+    res.json({ roles: user.roles });
+  } catch (err) {
+    console.error(err.message);
+    res.status(500).send('Server error');
+  }
+};

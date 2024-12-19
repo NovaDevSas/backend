@@ -2,10 +2,11 @@ const express = require('express');
 const router = express.Router();
 const userController = require('../controllers/userController');
 const verifyRoles = require('../middleware/verifyRoles');
+const authMiddleware = require('../middleware/authMiddleware');
 
-router.get('/users', verifyRoles(['Administrador', 'SuperAdministrador']), userController.getUsers);
-router.post('/users', verifyRoles(['Administrador', 'SuperAdministrador']), userController.createUser);
-router.put('/users/:id', verifyRoles(['Administrador', 'SuperAdministrador']), userController.updateUser);
-router.delete('/users/:id', verifyRoles(['SuperAdministrador']), userController.deleteUser);
+router.get('/users', authMiddleware, verifyRoles(['SuperAdministrador', 'Administrador']), userController.getUsers);
+router.post('/users', authMiddleware, verifyRoles(['SuperAdministrador', 'Administrador']), userController.createUser);
+router.put('/users/:id', authMiddleware, verifyRoles(['SuperAdministrador', 'Administrador']), userController.updateUser);
+router.delete('/users/:id', authMiddleware, verifyRoles(['SuperAdministrador']), userController.deleteUser);
 
 module.exports = router;
